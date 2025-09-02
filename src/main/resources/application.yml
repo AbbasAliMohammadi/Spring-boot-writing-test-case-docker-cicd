@@ -1,7 +1,6 @@
 spring:
   application:
         name: test
-        
   datasource:
     url: jdbc:postgresql://host.docker.internal:5432/testdb
     username: postgres
@@ -16,5 +15,4 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
 server:
-   port: 1000
-      
+  port: 1000
