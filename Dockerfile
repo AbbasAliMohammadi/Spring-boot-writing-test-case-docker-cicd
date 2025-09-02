@@ -1,5 +1,5 @@
 # Step 1: Build the JAR using Maven in a builder image with Java 21
-FROM maven:3.9.0-eclipse-temurin-21 AS build
+FROM maven:3.9.0-openjdk-21-slim AS build
 
 # Set working directory inside the container
 WORKDIR /app
@@ -17,7 +17,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Step 2: Create a smaller runtime image with Java 21 JDK
-FROM eclipse-temurin:21-jdk-alpine
+FROM eclipse-temurin:21-jdk
 
 # Set working directory inside the container
 WORKDIR /app
