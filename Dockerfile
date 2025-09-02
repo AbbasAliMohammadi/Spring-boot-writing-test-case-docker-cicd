@@ -1,32 +1,25 @@
-# Step 1: Build the JAR using Maven in a builder image with Java 21
-FROM maven:3.9.0-openjdk-21-slim AS build
+# Use OpenJDK 21 image with Maven installed for build
+FROM eclipse-temurin:21-jdk as build
 
-# Set working directory inside the container
+# Install Maven (using SDKMAN or package manager)
+RUN apt-get update && apt-get install -y maven
+
 WORKDIR /app
 
-# Copy only the pom.xml and download dependencies (cached layer)
 COPY pom.xml .
-
-# Download dependencies (cached unless pom.xml changes)
 RUN mvn dependency:go-offline -B
 
-# Copy the source code
 COPY src ./src
 
-# Build the JAR (skip tests to speed up build)
 RUN mvn clean package -DskipTests
 
-# Step 2: Create a smaller runtime image with Java 21 JDK
+# Runtime stage
 FROM eclipse-temurin:21-jdk
 
-# Set working directory inside the container
 WORKDIR /app
 
-# Copy the JAR from the build stage
 COPY --from=build /app/target/*.jar app.jar
 
-# Expose the port your Spring Boot app runs on (change 1000 to 8080 if you prefer)
 EXPOSE 1000
 
-# Run the jar file
 ENTRYPOINT ["java", "-jar", "app.jar"]
